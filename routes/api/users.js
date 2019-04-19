@@ -5,6 +5,7 @@ const router = express.Router();
 // const jwt = require("jsonwebtoken");
 // const keys = require("../../config/keys");
 const passport = require('passport');
+const mailer = require('../../validation/mailer');
 
 const registerValidation = require('../../validation/register');
 const loginValidation = require('../../validation/login');
@@ -58,6 +59,7 @@ router.post('/register', (req, res) => {
             
             newUser.hashPassword();
             newUser.generateRegHash();
+            mailer(newUser);
 
             return newUser.save()
                 .then(() => { res.status(200).json({ user: newUser.getJson() })});
@@ -66,7 +68,14 @@ router.post('/register', (req, res) => {
 
 // `session: false` because this is an API server. The server does not need to preserve state.
 router.get('/protected', passport.authenticate('jwt', { session: false }), (req, res) => {
-    res.status(200).json({ msg: "GET /protected successful" });
+    return res.status(200).json({ msg: "GET /protected successful" });
+})
+
+router.get('/verify/:regHash', (req, res) => {
+    return res.status(200).json({ 
+        msg: "GET /verify successful",
+        regHash: req.params.regHash
+    });
 })
 
 module.exports = router;

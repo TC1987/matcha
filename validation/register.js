@@ -22,7 +22,7 @@ module.exports = (data) => {
     }
     
     if (!validator.equals(data.password, data.confirm_password)) {
-        errors.confirm_passwod = "passwords must match";
+        errors.confirm_password = "passwords must match";
     }
 
     return {

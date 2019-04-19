@@ -92,7 +92,7 @@ genSalt(password)
 
 UserSchema.methods.generateRegHash = function() {
     const salt = bcrypt.genSaltSync(5);
-    const hash = bcrypt.hashSync(this.email, salt);
+    const hash = bcrypt.hashSync(this.email + this.date, salt);
     this.regHash = hash;
 }
 
