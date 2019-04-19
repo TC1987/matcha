@@ -29,11 +29,11 @@ router.post('/login', (req, res) => {
     User.findOne({ username: req.body.username })
         .then(user => {
             if (!user) {
-                return res.status(404).json({ user: "User not found" });
+                return res.status(404).json({ user: "user not found" });
             }
 
             if (!user.validatePassword(req.body.password)) {
-                return res.status(401).json({ password: "Invalid password" });
+                return res.status(401).json({ password: "invalid password" });
             }
 
             return res.status(200).json({ user: user.getJson() });
@@ -51,14 +51,15 @@ router.post('/register', (req, res) => {
     User.findOne({ email: req.body.email })
         .then(user => {
             if (user) {
-                return res.status(400).json({ email: "Email already exists" });
+                return res.status(400).json({ email: "email already exists" });
             }
 
             const { body } = req;
             const newUser = new User(body);
             
             newUser.hashPassword();
-            newUser.generateRegHash();
+            // newUser.generateRegHash();
+
             mailer(newUser);
 
             return newUser.save()
@@ -72,10 +73,15 @@ router.get('/protected', passport.authenticate('jwt', { session: false }), (req,
 })
 
 router.get('/verify/:regHash', (req, res) => {
-    return res.status(200).json({ 
-        msg: "GET /verify successful",
-        regHash: req.params.regHash
-    });
+    User.findById(req.params.regHash)
+        .then(user => {
+            if (!user || user.verified) {
+                return res.status(404).json({ msg: "invalid verification link" });
+            }
+            user.verified = true;
+            user.save()
+                .then(() => res.status(200).json({ msg: "GET /verify successful" }));
+        })
 })
 
 module.exports = router;
