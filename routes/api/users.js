@@ -57,6 +57,7 @@ router.post('/register', (req, res) => {
             const newUser = new User(body);
             
             newUser.hashPassword();
+            newUser.generateRegHash();
 
             return newUser.save()
                 .then(() => { res.status(200).json({ user: newUser.getJson() })});

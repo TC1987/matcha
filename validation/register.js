@@ -3,7 +3,7 @@
 
 const validator = require('validator');
 const isEmpty = require('is-empty');
-const { checkEmpty, doTrim } = require('./helpers');
+const { checkEmpty, trimInput } = require('./helpers');
 
 module.exports = (data) => {
     const errors = {};
@@ -11,7 +11,7 @@ module.exports = (data) => {
     // Validator only works on strings. Need to convert values from null/undefined to "" if empty.
     const fields = ['email', 'username', 'firstname', 'lastname', 'password'];
     checkEmpty(data, errors, fields);
-    doTrim(data, fields);
+    trimInput(data, fields);
 
     if (!validator.isEmail(data.email)) {
         errors.email = "email is invalid";

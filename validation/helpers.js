@@ -9,7 +9,7 @@ const checkEmpty = (data, errors, fields) => {
     }
 };
 
-const doTrim = (data, fields) => {
+const trimInput = (data, fields) => {
     for (let field of fields) {
         data[field] = data[field].trim();
     }
@@ -17,5 +17,5 @@ const doTrim = (data, fields) => {
 
 module.exports = {
     checkEmpty,
-    doTrim
+    trimInput
 }

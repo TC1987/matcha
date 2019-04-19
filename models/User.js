@@ -30,7 +30,12 @@ const UserSchema = new Schema({
     date: {
         type: Date,
         default: Date.now
-    }
+    },
+    verified: {
+        type: Boolean,
+        default: false
+    },
+    regHash: String
 });
 
 /*
@@ -84,6 +89,12 @@ genSalt(password)
 //         });
 //     });
 // }
+
+UserSchema.methods.generateRegHash = function() {
+    const salt = bcrypt.genSaltSync(5);
+    const hash = bcrypt.hashSync(this.email, salt);
+    this.regHash = hash;
+}
 
 UserSchema.methods.hashPassword = function() {
     const salt = bcrypt.genSaltSync(10);
