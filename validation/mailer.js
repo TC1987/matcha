@@ -17,7 +17,7 @@ let mailOptions = {
 };
 
 module.exports = (user) => {
-    mailOptions.to = 'matcha.42.us+4@gmail.com';
+    mailOptions.to = 'matcha.42.us@gmail.com';
     mailOptions.html = `<p>Hey ${user.firstname}, congrats on signing
     up for Matcha! All that's left is
     <a href="http://localhost:8000/api/users/verify/${user._id}">clicking this link</a>

@@ -25,10 +25,10 @@ app.get('/', (req, res) => {
 })
 
 const users = require('./routes/api/users');
-const profile = require('./routes/api/profile');
+const profile = require('./routes/api/profiles');
 
 app.use('/api/users', users);
-app.use('/api/profile', profile);
+app.use('/api/profiles', profile);
 
 const PORT = process.env.PORT || 8000;
 

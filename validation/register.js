@@ -7,9 +7,9 @@ const { checkEmpty, trimInput } = require('./helpers');
 
 module.exports = (data) => {
     const errors = {};
-
     // Validator only works on strings. Need to convert values from null/undefined to "" if empty.
     const fields = ['email', 'username', 'firstname', 'lastname', 'password'];
+    
     checkEmpty(data, errors, fields);
     trimInput(data, fields);
 

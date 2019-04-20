@@ -109,7 +109,7 @@ UserSchema.methods.generateJWT = function() {
 
     const payload = {
         id: this.id,
-        firstname: this.firstname
+        username: this.username
     };
 
     // Expires in 1 year.
