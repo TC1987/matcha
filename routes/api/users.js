@@ -16,7 +16,8 @@ const User = require('../../models/User');
 require('../../config/passport')(passport);
 
 router.get('/', (req, res) => {
-    return res.json({ msg: "GET /users successful"});
+    User.find()
+        .then(users => res.status(200).json(users));
 });
 
 router.post('/login', (req, res) => {
@@ -54,17 +55,24 @@ router.post('/register', (req, res) => {
                 return res.status(400).json({ email: "email already exists" });
             }
 
-            const { body } = req;
-            const newUser = new User(body);
-            
-            newUser.hashPassword();
-            // newUser.generateRegHash();
+            User.findOne({ username: req.body.username })
+                .then(user => {
+                    if (user) {
+                        return res.status(400).json({ username: "username already exists" });
+                    }
 
-            mailer(newUser);
-
-            return newUser.save()
-                .then(() => { res.status(200).json({ user: newUser.getJson() })})
-                .catch(err => console.log(err));
+                    const { body } = req;
+                    const newUser = new User(body);
+                    
+                    newUser.hashPassword();
+                    // newUser.generateRegHash();
+        
+                    mailer(newUser);
+        
+                    return newUser.save()
+                        .then(() => { res.status(200).json({ user: newUser.getJson() })})
+                        .catch(err => console.log(err));
+                })
         });
 });
 

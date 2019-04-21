@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const ProfileSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'User'
     },
     gender: {
         type: String,
@@ -25,15 +25,15 @@ const ProfileSchema = new Schema({
         {
             user: {
                 type: Schema.Types.ObjectId,
-                ref: 'users'
+                ref: 'User'
             }
         }
     ],
-    views: [
+    history: [
         {
             user: {
                 type: Schema.Types.ObjectId,
-                ref: 'users'
+                ref: 'User'
             }
         }
     ]

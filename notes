@@ -1,0 +1,8 @@
+The user must be able to check who looked at his/her profile as well as who “liked” him/her.
+
+    - When someone goes to someone's profile via /api/profiles/:id, they'll need to be authenticated. Because of this, we can extract the logged in user and add them to :id's view history. Same thing for likes but via /api/likes/:id.
+
+The user must have a public “fame rating”.
+
+    - `fame rating` can be based on profile views and likes in relation to time joined. The more views and likes someone has, higher the fame rating. Fame rating will be a fraction (e.g 6.1). Be lienient so that many people have 10s.
+
