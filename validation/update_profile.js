@@ -6,7 +6,7 @@ const { checkEmpty, trimInput } = require('./helpers');
 // Only need to check if biography is empty. Should be required.
 module.exports = (data) => {
     const errors = {};
-    const fields = ['gender', 'preference', 'biography'];
+    const fields = ['email', 'firstname', 'lastname'];
     
     checkEmpty(data, errors, fields);
     trimInput(data, fields);

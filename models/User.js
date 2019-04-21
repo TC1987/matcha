@@ -109,18 +109,16 @@ UserSchema.methods.generateJWT = function() {
 
     const payload = {
         id: this.id,
-        username: this.username
     };
 
     // Expires in 1 year.
     // return jwt.sign(payload, keys.secretOrKey, { expiresIn: 31556926 });
-    return jwt.sign(payload, keys.secretOrKey, { expiresIn: 30 });
+    return jwt.sign(payload, keys.secretOrKey, { expiresIn: 600 });
 }
 
 UserSchema.methods.getJson = function() {
     return {
         _id: this._id,
-        email: this.email,
         token: "Bearer " + this.generateJWT()
     }
 }

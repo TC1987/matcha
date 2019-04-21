@@ -63,7 +63,8 @@ router.post('/register', (req, res) => {
             mailer(newUser);
 
             return newUser.save()
-                .then(() => { res.status(200).json({ user: newUser.getJson() })});
+                .then(() => { res.status(200).json({ user: newUser.getJson() })})
+                .catch(err => console.log(err));
         });
 });
 
