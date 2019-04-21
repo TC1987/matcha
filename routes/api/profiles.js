@@ -98,10 +98,10 @@ router.get('/:id', (req, res) => {
             // Add to history if not logged in user looking at his/her own profile.
             if (req.user.id !== user.id) {
                 Profile.findOne({ user: user.id })
-                    .then(user => {
-                        console.log(`req.user.id: ${req.user.id}`);
-                        console.log(user.history);
-                        user.history.push(req.user.id)
+                    .then(profile => {
+                        // If a user views a profile twice, their IDs should show up twice.
+                        profile.history.push(req.user.id);
+                        profile.save();
                     })
                     .catch(err => console.log(err));
             }
