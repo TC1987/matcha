@@ -28,7 +28,11 @@ const ProfileSchema = new Schema({
     history: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }]
+    }],
+    gps: {
+        type: Boolean,
+        default: true
+    }
 }, {
     timestamps: true
 });

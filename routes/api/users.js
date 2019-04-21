@@ -27,6 +27,17 @@ router.post('/login', (req, res) => {
         return res.status(400).json(errors);
     }
 
+
+    // Get client's IP address for geolocation.
+    // The code below is for NodeJS. Since using Express, just use `req.ip`.
+    // const ip = (req.headers['x-forwarded-for'] || '').split(',').pop() || 
+    //      req.connection.remoteAddress || 
+    //      req.socket.remoteAddress || 
+    //      req.connection.socket.remoteAddress
+
+    console.log(req.ip);
+
+
     User.findOne({ username: req.body.username })
         .then(user => {
             if (!user) {

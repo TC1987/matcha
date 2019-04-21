@@ -89,24 +89,34 @@ router.post('/', (req, res) => {
         });
 });
 
+// View someone's profile and get added to their history list.
 router.get('/:id', (req, res) => {
-    User.findById(req.params.id)
-        .then(user => {
-            if (!user) {
+    Profile.findOne({ user: req.params.id })
+        .then(profile => {
+            if (!profile) {
                 return res.status(404).json({ msg: 'user not found' });
             }
-            // Add to history if not logged in user looking at his/her own profile.
-            if (req.user.id !== user.id) {
-                Profile.findOne({ user: user.id })
-                    .then(profile => {
-                        // If a user views a profile twice, their IDs should show up twice.
-                        profile.history.push(req.user.id);
-                        profile.save();
-                    })
-                    .catch(err => console.log(err));
+            if (req.user.id !== req.params.id) {
+                profile.history.push(req.user.id);
+                profile.save();
             }
-            return res.status(200).json(user);
-        });
+            return res.status(200).json(profile);
+        })
+        .catch(err => console.log(err));
 });
+
+// Like/Unlike
+router.get('/likes/:id', (req, res) => {
+    Profile.findOne({ user: req.params.id })
+        .then(profile => {
+            if (!profile) {
+                return res.status(400).json({ msg: 'user not found' });
+            }
+            const index = profile.likes.indexOf(req.user.id);
+            index == -1 ? profile.likes.push(req.user.id) : profile.likes.splice(index, 1);
+            profile.save();
+            return res.status(200).json(profile);
+        })
+})
 
 module.exports = router;
