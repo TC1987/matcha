@@ -21,22 +21,14 @@ const ProfileSchema = new Schema({
     tags: {
         type: [String]
     },
-    likes: [
-        {
-            user: {
-                type: Schema.Types.ObjectId,
-                ref: 'User'
-            }
-        }
-    ],
-    history: [
-        {
-            user: {
-                type: Schema.Types.ObjectId,
-                ref: 'User'
-            }
-        }
-    ]
+    likes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    history: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 }, {
     timestamps: true
 });

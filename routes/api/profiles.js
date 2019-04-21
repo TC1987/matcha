@@ -25,13 +25,13 @@ router.use(passport.authenticate('jwt', { session: false }), (req, res, next) =>
 })
 
 // Retrieve all profiles.
-router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.get('/', (req, res) => {
     Profile.find()
         .then(profiles => res.status(200).json(profiles));
 });
 
 // Creating and updating profile data. Only creating so far.
-router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.post('/', (req, res) => {
     const { errors, isValid } = profileValidation(req.body);
 
     if (!isValid) {
@@ -71,11 +71,11 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
                             }
                             // Update profile information.
                             Profile.findOneAndUpdate(
-                            { user: req.user.id },
-                            { $set: { gender: req.body.gender, preference: req.body.preference, biography: req.body.biography, tags: req.body.tags } },
-                            { new: true })
-                            .then(profile => res.status(200).json(profile))
-                            .catch(err => console.log(err));
+                                { user: req.user.id },
+                                { $set: { gender: req.body.gender, preference: req.body.preference, biography: req.body.biography, tags: req.body.tags } },
+                                { new: true })
+                                .then(profile => res.status(200).json(profile))
+                                .catch(err => console.log(err));
                         })
                         .catch(err => console.log(err));
                 } else {
@@ -89,17 +89,24 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
         });
 });
 
-router.get('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
-    User.findById(id)
+router.get('/:id', (req, res) => {
+    User.findById(req.params.id)
         .then(user => {
             if (!user) {
                 return res.status(404).json({ msg: 'user not found' });
             }
             // Add to history if not logged in user looking at his/her own profile.
-            if (req.user.id !== req.params.id) {
-                User.find
+            if (req.user.id !== user.id) {
+                Profile.findOne({ user: user.id })
+                    .then(user => {
+                        console.log(`req.user.id: ${req.user.id}`);
+                        console.log(user.history);
+                        user.history.push(req.user.id)
+                    })
+                    .catch(err => console.log(err));
             }
-        })
-})
+            return res.status(200).json(user);
+        });
+});
 
 module.exports = router;
