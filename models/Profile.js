@@ -35,9 +35,16 @@ const ProfileSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],
+    blocked: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     gps: {
         type: Boolean,
         default: true
+    },
+    lastOnline: {
+        type: Date
     }
 }, {
     timestamps: true

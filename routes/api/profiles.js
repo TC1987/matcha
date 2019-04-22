@@ -118,6 +118,11 @@ router.get('/:id', (req, res) => {
             // profile.viewed = [];
             // profile.save();
 
+            profile = profile.toObject();
+
+            delete profile.user.email;
+            delete profile.user.password;
+
             return res.status(200).json(profile);
         })
         .catch(err => console.log(err));
@@ -134,7 +139,9 @@ router.get('/likes/:id', (req, res) => {
             index == -1 ? profile.likes.push(req.user.id) : profile.likes.splice(index, 1);
             profile.save();
             return res.status(200).json(profile);
-        })
-})
+        });
+});
+
+
 
 module.exports = router;
