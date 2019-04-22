@@ -25,10 +25,21 @@ router.use(passport.authenticate('jwt', { session: false }), (req, res, next) =>
 })
 
 // Retrieve all profiles.
-router.get('/', (req, res) => {
+router.get('/all', (req, res) => {
     Profile.find()
         .then(profiles => res.status(200).json(profiles));
 });
+
+// Get profiles that match user's preference.
+router.get('/', (req, res) => {
+    Profile.findOne({ user: req.user.id })
+        .then(profile => {
+            const preference = profile.preference;
+
+            Profile.find({ preference })
+                .then(profiles => res.status(200).json(profiles));
+        })
+})
 
 // Creating and updating profile data. Only creating so far.
 router.post('/', (req, res) => {

@@ -1,5 +1,3 @@
-// #1 Also need to check for existence of username.
-
 const express = require('express');
 const geoip = require('geoip-lite');
 const router = express.Router();
@@ -61,7 +59,6 @@ router.post('/register', (req, res) => {
         return res.status(400).json(errors);
     }
 
-    // #1
     User.findOne({ email: req.body.email })
         .then(user => {
             if (user) {
@@ -78,8 +75,6 @@ router.post('/register', (req, res) => {
                     const newUser = new User(body);
                     
                     newUser.hashPassword();
-                    // newUser.generateRegHash();
-        
                     mailer(newUser);
         
                     return newUser.save()
