@@ -6,3 +6,15 @@ The user must have a public “fame rating”.
 
     - `fame rating` can be based on profile views and likes in relation to time joined. The more views and likes someone has, higher the fame rating. Fame rating will be a fraction (e.g 6.1). Be lienient so that many people have 10s.
 
+The user must be able to easily get a list of suggestions that match his/her profile.
+
+    Need to look at logged in user's preference. If preference is bisexual, return all users. If male, return only males.
+    
+    - User.find({ gender: all/male/female })
+
+You must cleverly match profiles:
+    - Same geographic area as the user.
+    - With a maximum of common tags.
+    - With a maximum “fame rating”
+
+    

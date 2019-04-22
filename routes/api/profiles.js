@@ -69,6 +69,10 @@ router.post('/', (req, res) => {
                             if (req.body.tags) {
                                 req.body.tags = req.body.tags.split(', ');
                             }
+                            // If preference is not specified, default to `bisexual`.
+                            if (!req.body.preference) {
+                                req.body.preference = 'bisexual';
+                            }
                             // Update profile information.
                             Profile.findOneAndUpdate(
                                 { user: req.user.id },
@@ -90,15 +94,28 @@ router.post('/', (req, res) => {
 });
 
 // View someone's profile and get added to their history list.
+// View someone's profile and they get added to your viewed list.
 router.get('/:id', (req, res) => {
     Profile.findOne({ user: req.params.id })
+        // .populate('user')
         .then(profile => {
+            // if (err) {
+            //     console.log(err);
+            //     return res.status(400).json(err);
+            // }
             if (!profile) {
                 return res.status(404).json({ msg: 'user not found' });
             }
             if (req.user.id !== req.params.id) {
+                console.log('ADD')
                 profile.history.push(req.user.id);
-                profile.save();
+                profile.save(() => {
+                    Profile.findOne({ user: req.user.id })
+                        .then(current_user => {
+                            current_user.viewed.push(profile.user);
+                            current_user.save();
+                        })
+                });
             }
             return res.status(200).json(profile);
         })

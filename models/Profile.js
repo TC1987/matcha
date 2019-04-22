@@ -12,7 +12,7 @@ const ProfileSchema = new Schema({
     },
     preference: {
         type: String,
-        required: true
+        default: 'bisexual'
     },
     biography: {
         type: String,
@@ -25,7 +25,13 @@ const ProfileSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],
+    // history displays who has looked at a user's profile.
     history: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    // viewed shows what profiles the current user has seen.
+    viewed: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
     }],

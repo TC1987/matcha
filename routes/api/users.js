@@ -1,6 +1,7 @@
 // #1 Also need to check for existence of username.
 
 const express = require('express');
+const geoip = require('geoip-lite');
 const router = express.Router();
 // const jwt = require("jsonwebtoken");
 // const keys = require("../../config/keys");
@@ -36,7 +37,8 @@ router.post('/login', (req, res) => {
     //      req.connection.socket.remoteAddress
 
     console.log(req.ip);
-
+    const geo = geoip.lookup('64.62.224.29');
+    console.log(geo);
 
     User.findOne({ username: req.body.username })
         .then(user => {

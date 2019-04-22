@@ -112,8 +112,8 @@ UserSchema.methods.generateJWT = function() {
     };
 
     // Expires in 1 year.
-    // return jwt.sign(payload, keys.secretOrKey, { expiresIn: 31556926 });
-    return jwt.sign(payload, keys.secretOrKey, { expiresIn: 600 });
+    return jwt.sign(payload, keys.secretOrKey, { expiresIn: 31556926 });
+    // return jwt.sign(payload, keys.secretOrKey, { expiresIn: 600 });
 }
 
 UserSchema.methods.getJson = function() {
