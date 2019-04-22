@@ -97,17 +97,12 @@ router.post('/', (req, res) => {
 // View someone's profile and they get added to your viewed list.
 router.get('/:id', (req, res) => {
     Profile.findOne({ user: req.params.id })
-        // .populate('user')
+        .populate('user')
         .then(profile => {
-            // if (err) {
-            //     console.log(err);
-            //     return res.status(400).json(err);
-            // }
             if (!profile) {
                 return res.status(404).json({ msg: 'user not found' });
             }
             if (req.user.id !== req.params.id) {
-                console.log('ADD')
                 profile.history.push(req.user.id);
                 profile.save(() => {
                     Profile.findOne({ user: req.user.id })
@@ -117,6 +112,12 @@ router.get('/:id', (req, res) => {
                         })
                 });
             }
+
+            // RESET HISTORY AND VIEWED
+            // profile.history = [];
+            // profile.viewed = [];
+            // profile.save();
+
             return res.status(200).json(profile);
         })
         .catch(err => console.log(err));
