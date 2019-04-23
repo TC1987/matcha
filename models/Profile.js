@@ -6,6 +6,10 @@ const ProfileSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
+    age: {
+        type: Number,
+        required: true
+    },
     gender: {
         type: String,
         required: true

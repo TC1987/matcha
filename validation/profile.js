@@ -2,11 +2,11 @@ const validator = require('validator');
 const isEmpty = require('is-empty');
 const { checkEmpty, trimInput } = require('./helpers');
 
-// gender, preference are going to be dropdowns. Need to make sure that an option is selected only for gender.
+// age, gender, and preference are going to be dropdowns. Need to make sure that an option is selected for age and gender.
 // Only need to check if biography is empty. Should be required.
 module.exports = (data) => {
     const errors = {};
-    const fields = ['gender', 'biography'];
+    const fields = ['age', 'gender', 'biography'];
     
     checkEmpty(data, errors, fields);
     trimInput(data, fields);

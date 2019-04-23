@@ -25,21 +25,12 @@ router.use(passport.authenticate('jwt', { session: false }), (req, res, next) =>
 })
 
 // Retrieve all profiles.
-router.get('/all', (req, res) => {
-    Profile.find()
-        .then(profiles => res.status(200).json(profiles));
-});
-
-// Get profiles that match user's preference.
 router.get('/', (req, res) => {
-    Profile.findOne({ user: req.user.id })
-        .then(profile => {
-            const preference = profile.preference;
-
-            Profile.find({ preference })
-                .then(profiles => res.status(200).json(profiles));
-        })
-})
+    Profile
+        .find()
+        .populate('user')
+        .exec((err, profiles) => res.status(200).json(profiles));
+});
 
 // Creating and updating profile data. Only creating so far.
 router.post('/', (req, res) => {
@@ -58,49 +49,74 @@ router.post('/', (req, res) => {
 
             // Add or update profile information for user.
             Profile.findOne({ user: req.user.id })
-            .then(profile => {
-                // Already exists, need to update.
-                // In both cases, need to make sure that email doesn't already exist.
-                if (profile) {
-                    console.log('Profile already exists');
+                .then(profile => {
+                    // Already exists, need to update.
+                    // In both cases, need to make sure that email doesn't already exist.
+                    if (profile) {
+                        console.log('Profile already exists');
 
-                    // Need to validate email, firstname, and lastname.
-                    const { errors, isValid } = updateProfileValidation(req.body);
+                        // Need to validate email, firstname, and lastname.
+                        const { errors, isValid } = updateProfileValidation(req.body);
 
-                    if (!isValid) {
-                        return res.status(400).json(errors);
+                        if (!isValid) {
+                            return res.status(400).json(errors);
+                        }
+
+                        // Update user information.
+                        User.findOneAndUpdate(
+                            { id: req.user.id },
+                            { $set: { email: req.body.email, firstname: req.body.firstname, lastname: req.body.lastname }},
+                            { new: true })
+                            .then(() => {
+                                if (req.body.tags) {
+                                    req.body.tags = req.body.tags.split(', ');
+                                }
+                                // If preference is not specified, default to `bisexual`.
+                                if (!req.body.preference) {
+                                    req.body.preference = 'bisexual';
+                                }
+                                // Update profile information.
+                                Profile.findOneAndUpdate(
+                                    { user: req.user.id },
+                                    { $set: { age: req.body.age, gender: req.body.gender, preference: req.body.preference, biography: req.body.biography, tags: req.body.tags } },
+                                    { new: true })
+                                    .then(profile => res.status(200).json(profile))
+                                    .catch(err => console.log(err));
+                            })
+                            .catch(err => console.log(err));
+                    } else {
+                        console.log('Profile doesn\'t exist');
+                        req.body.user = req.user.id;
+                        return new Profile(req.body).save()
+                            .then(profile => res.status(200).json(profile))
+                            .catch(err => console.log(err));
                     }
+                });
+        });
+});
 
-                    // Update user information.
-                    User.findOneAndUpdate(
-                        { id: req.user.id },
-                        { $set: { email: req.body.email, firstname: req.body.firstname, lastname: req.body.lastname }},
-                        { new: true })
-                        .then(() => {
-                            if (req.body.tags) {
-                                req.body.tags = req.body.tags.split(', ');
-                            }
-                            // If preference is not specified, default to `bisexual`.
-                            if (!req.body.preference) {
-                                req.body.preference = 'bisexual';
-                            }
-                            // Update profile information.
-                            Profile.findOneAndUpdate(
-                                { user: req.user.id },
-                                { $set: { gender: req.body.gender, preference: req.body.preference, biography: req.body.biography, tags: req.body.tags } },
-                                { new: true })
-                                .then(profile => res.status(200).json(profile))
-                                .catch(err => console.log(err));
-                        })
-                        .catch(err => console.log(err));
-                } else {
-                    console.log('Profile doesn\'t exist');
-                    req.body.user = req.user.id;
-                    return new Profile(req.body).save()
-                        .then(profile => res.status(200).json(profile))
-                        .catch(err => console.log(err));
-                }
-            });
+// Get profiles that match user's preference and are interested in the user's gender.
+router.get('/preference', (req, res) => {
+    Profile
+        .findOne({ user: req.user.id })
+        .then(profile => {
+            const { preference, gender } = profile;
+            const searchCriteria = {};
+
+            if (preference !== 'bisexual') {
+                searchCriteria.gender = preference;
+            }
+
+            Profile
+                .find(searchCriteria)
+                .where('preference').equals(gender)
+                .populate('user')
+                .exec((err, profiles) => {
+                    if (err) {
+                        return res.status(400).json(err);
+                    }
+                    res.status(200).json(profiles);
+                })
         });
 });
 
@@ -109,7 +125,10 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
     Profile.findOne({ user: req.params.id })
         .populate('user')
-        .then(profile => {
+        .exec((err, profile) => {
+            if (err) {
+                return res.status(400).json(err);
+            }
             if (!profile) {
                 return res.status(404).json({ msg: 'user not found' });
             }
@@ -136,8 +155,7 @@ router.get('/:id', (req, res) => {
             delete profile.user.password;
 
             return res.status(200).json(profile);
-        })
-        .catch(err => console.log(err));
+        });
 });
 
 // Like/Unlike
@@ -153,7 +171,5 @@ router.get('/likes/:id', (req, res) => {
             return res.status(200).json(profile);
         });
 });
-
-
 
 module.exports = router;
