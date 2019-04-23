@@ -1,7 +1,16 @@
+const mongoose = require('mongoose');
 const User = require('../models/User');
 const Profile = require('../models/Profile');
+const { mongoURI } = require('./keys');
+
+mongoose.connect(mongoURI, { useNewUrlParser: true })
+    .then(() => console.info('Connected to MongoDB'))
+    .catch(err => console.warn(err));
 
 const profileFactory = (user, gender, preference) => {
+
+    console.log('Called');
+
     const newProfile = new Profile({
         user,
         gender,
@@ -9,10 +18,11 @@ const profileFactory = (user, gender, preference) => {
         biography: 'Hello World'
     });
 
-    newProfile.save(profile => {
-        console.log('Profile Saved');
-        console.log(profile.user);
-    });
+    newProfile.save()
+        .then(profile => {
+            console.log('Profile Saved');
+            console.log(profile.user);
+        });
 }
 
 const userFactory = (email, username, firstname, lastname, password, gender, preference) => {
@@ -29,8 +39,13 @@ const userFactory = (email, username, firstname, lastname, password, gender, pre
 
     console.log(newUser.password);
 
-    newUser.save();
-    // newUser.save(user => profileFactory(user.id, gender, preference));
+    // newUser.save();
+    
+    newUser.save()
+        .then(user => {
+            console.log('Saved');
+            profileFactory(user.id, gender, preference);
+        });
     
 }
 

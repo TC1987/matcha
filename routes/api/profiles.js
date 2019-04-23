@@ -115,12 +115,13 @@ router.get('/:id', (req, res) => {
             }
             if (req.user.id !== req.params.id) {
                 profile.history.push(req.user.id);
-                profile.save(() => {
-                    Profile.findOne({ user: req.user.id })
-                        .then(current_user => {
-                            current_user.viewed.push(profile.user);
-                            current_user.save();
-                        })
+                profile.save()
+                    .then(() => {
+                        Profile.findOne({ user: req.user.id })
+                            .then(current_user => {
+                                current_user.viewed.push(profile.user);
+                                current_user.save();
+                    });
                 });
             }
 
