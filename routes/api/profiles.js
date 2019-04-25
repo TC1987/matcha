@@ -95,7 +95,7 @@ router.post('/', (req, res) => {
         });
 });
 
-// Get profiles that match user's preference and are interested in the user's gender.
+// Get profiles that match user's preference and are interested in the user's gender AND not blocked.
 router.get('/preference', (req, res) => {
     Profile
         .findOne({ user: req.user.id })
@@ -171,5 +171,18 @@ router.get('/likes/:id', (req, res) => {
             return res.status(200).json(profile);
         });
 });
+
+// Block/Unblock
+router.get('/block/:id', (req, res) => {
+    Profile
+        .findOne({ user: req.user.id })
+        .then(profile => {
+            const index = profile.blocked.indexOf(req.params.id);
+            index == -1 ? profile.blocked.push(req.params.id) : profile.blocked.splice(index, 1);
+            profile.save();
+            return res.status(200).json(profile);
+        })
+        .catch(err => console.log(err));
+})
 
 module.exports = router;
